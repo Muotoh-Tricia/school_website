@@ -64,72 +64,44 @@
 </template>
 
 <script>
-import axios from "axios";
+import { useAuthStore } from "@/stores/authStore";
 import { useToast } from "vue-toastification";
 
 export default {
-  setup() {
-    const toast = useToast();
-    return { toast };
-  },
   data() {
     return {
       email: "",
       password: "",
       isLoading: false,
+      error: null,
     };
+  },
+  setup() {
+    const toast = useToast();
+    const authStore = useAuthStore();
+
+    return { toast, authStore };
   },
   methods: {
     async handleLogin() {
-      // Reset previous errors
       this.isLoading = true;
+      this.error = null;
 
       try {
-        // Get CSRF cookie first (required for Sanctum)
-        await axios.get("/sanctum/csrf-cookie");
-
-        // Attempt login
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/auth/login",
-          {
-            email: this.email,
-            password: this.password,
-          }
-        );
-        this.toast.success(response.data.message);
-        this.$router.push("/dashboard");
-
-        // Store authentication token
-        localStorage.setItem("token", response.data.access_token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-
-        // Set default Authorization header for future requests
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${response.data.access_token}`;
-
-        // Route based on user role
-        this.routeByUserRole(response.data.user.role);
+        await this.authStore.login({ email: this.email, password: this.password });
+        this.toast.success("Login successful!");
+        this.$router.push("/");
       } catch (err) {
-        // Handle login errors
-        this.toast.error(err.response.data.message);
+        this.error = err.response?.data?.message || "Login failed!";
+        this.toast.error(this.error);
       } finally {
         this.isLoading = false;
       }
     },
-    routeByUserRole(role) {
-      const routes = {
-        admin: "/admin/dashboard",
-        student: "/student/dashboard",
-        staff: "/staff/dashboard",
-      };
-
-      // Navigate to appropriate dashboard or default
-      // this.$router.push(routes[role] || '/dashboard')
-    },
   },
 };
 </script>
+
 
 <style scoped>
 .form-div {

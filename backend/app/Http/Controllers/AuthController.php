@@ -21,11 +21,11 @@ class AuthController extends Controller
                 'full_name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8|confirmed',
-                'phone_number' => 'required|string|max:20',
+                'phone_number' => 'required|string|max:11',
                 'department' => 'required|string',
                 'gender' => 'required|in:male,female,other',
                 'date_of_birth' => 'required|date',
-                'role' => 'required|in:admin,student,staff',
+                'userTypes_id' => 'required|exists:userTypes,id',
             ]);
 
             if ($validator->fails()) {
@@ -43,7 +43,7 @@ class AuthController extends Controller
                 'department' => $request->department,
                 'gender' => $request->gender,
                 'date_of_birth' => $request->date_of_birth,
-                'role' => $request->role,
+                'userTypes_id' =>  $request->userTypes_id,
             ]);
 
             return response()->json([

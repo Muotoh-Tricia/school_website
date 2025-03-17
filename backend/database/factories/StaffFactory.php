@@ -21,6 +21,7 @@ class StaffFactory extends Factory
         return [
             'user_id' =>User::factory(),
             'position' => $this->faker->randomElement(['HOD', 'lecturer', 'cleaner', 'Dean']),
+            // 'position' => collect(['HOD', 'Lecturer', 'Cleaner', 'Dean'])->shuffle()->first(),
         ];
     }
 }

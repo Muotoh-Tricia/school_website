@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('password');
             $table->enum('gender', ['male', 'female', 'other']);
             $table->date('date_of_birth');
-            $table->enum('role', ['student', 'staff', 'admin']);
+            // $table->enum('userTypes', ['student', 'staff', 'admin']);
+            $table->foreignId('userTypes_id')->constrained('usertypes')->onDelete('cascade');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
