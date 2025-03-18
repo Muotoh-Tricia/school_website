@@ -12,16 +12,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create an admin user
-        // if (!User::where('email', 'admin@example.com')->exists()) {
-        //     User::factory()->create([
-        //         'userTypes_id' => 'admin',
-        //         'full_name' => 'Admin User',
-        //         'email' => 'admin@example.com',
-        //         'password' => bcrypt('password'),
-        //     ]);
-        // }
-
         // Create 5 student users
         User::factory(5)->create([
             'userTypes_id' => 1

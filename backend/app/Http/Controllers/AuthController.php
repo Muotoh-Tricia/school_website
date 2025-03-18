@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Staff;
+use App\Models\Student;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -16,6 +19,8 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        DB::beginTransaction();
+        
         try {
             $validator = Validator::make($request->all(), [
                 'full_name' => 'required|string|max:255',
@@ -26,6 +31,7 @@ class AuthController extends Controller
                 'gender' => 'required|in:male,female,other',
                 'date_of_birth' => 'required|date',
                 'userTypes_id' => 'required|exists:userTypes,id',
+                'level' => 'required_if:userTypes_id,1|in:100,200,300,400,500,600',
             ]);
 
             if ($validator->fails()) {
@@ -35,6 +41,7 @@ class AuthController extends Controller
                 ], 422);
             }
 
+            // Create user
             $user = User::create([
                 'full_name' => $request->full_name,
                 'email' => $request->email,
@@ -46,11 +53,30 @@ class AuthController extends Controller
                 'userTypes_id' =>  $request->userTypes_id,
             ]);
 
+            // Create student/staff record
+            if ($request->userTypes_id == 1) {
+                Student::create([
+                    'user_id' => $user->id,
+                    'level' => $request->level ?? '100' // Use provided level or default to 100
+                ]);
+            } else if ($request->userTypes_id == 2) {
+                Staff::create([
+                    'user_id' => $user->id,
+                    'position' => 'New Staff' // Default position for new staff
+                ]);
+            }
+
+            DB::commit();
+
+            // Load the relationship
+            $user->load($request->userTypes_id == 1 ? 'student' : 'staff');
+
             return response()->json([
                 'message' => 'Registration successful',
                 'user' => $user
             ], 201);
         } catch (Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'message' => 'Registration failed',
                 'error' => $e->getMessage()
@@ -83,8 +109,15 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            // Retrieve authenticated user
+            // Retrieve authenticated user with relationships
             $user = User::where('email', $request->email)->first();
+            
+            // Load the appropriate relationship based on user type
+            if ($user->userTypes_id == 1) {
+                $user->load('student');
+            } else if ($user->userTypes_id == 2) {
+                $user->load('staff');
+            }
 
             // Generate token
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -96,11 +129,12 @@ class AuthController extends Controller
             ], 200);
         } catch (Exception $e) {
             return response()->json([
-
+                'message' => 'Login failed',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
+
     /**
      * Logout user and revoke token
      */

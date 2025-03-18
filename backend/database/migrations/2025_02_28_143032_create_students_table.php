@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->integer('level');
+            $table->enum('level', ['100', '200', '300', '400', '500', '600'])->default('100');
             $table->timestamps();
         });
     }

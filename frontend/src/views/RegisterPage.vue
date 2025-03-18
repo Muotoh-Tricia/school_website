@@ -75,7 +75,7 @@
                     }}</small>
             </div>
 
-            <div class="mb-5">
+            <div class="mb-3">
                 <label class="form-label">UserType</label>
                 <select v-model="userTypes_id" class="form-select">
                     <option value="" disabled>Select User</option>
@@ -84,6 +84,22 @@
                 </select>
                 <small v-if="errors.userTypes_id" class="text-danger">{{
                     errors.userTypes_id
+                    }}</small>
+            </div>
+
+            <div v-if="userTypes_id == 1" class="mb-3">
+                <label class="form-label">Level</label>
+                <select v-model="level" class="form-select">
+                    <option value="" disabled>Select Level</option>
+                    <option value="100">100 Level</option>
+                    <option value="200">200 Level</option>
+                    <option value="300">300 Level</option>
+                    <option value="400">400 Level</option>
+                    <option value="500">500 Level</option>
+                    <option value="600">600 Level</option>
+                </select>
+                <small v-if="errors.level" class="text-danger">{{
+                    errors.level
                     }}</small>
             </div>
 
@@ -122,6 +138,7 @@ export default {
             password_confirmation: "",
             gender: "",
             userTypes_id: "",
+            level: "",
             errors: {},
             isLoading: false,
             apiError: null,
@@ -164,6 +181,8 @@ export default {
             if (!this.gender) this.errors.gender = "Gender is required.";
             if (!this.userTypes_id)
                 this.errors.userTypes_id = "User type is required.";
+            if (this.userTypes_id == 1 && !this.level)
+                this.errors.level = "Level is required.";
 
             return Object.keys(this.errors).length === 0;
         },
@@ -193,6 +212,7 @@ export default {
                     password_confirmation: this.password_confirmation,
                     gender: this.gender,
                     userTypes_id: parseInt(this.userTypes_id),
+                    level: this.level,
                 };
 
                 const response = await this.authStore.register(registrationData);
@@ -229,6 +249,7 @@ export default {
             this.password_confirmation = "";
             this.gender = "";
             this.userTypes_id = "";
+            this.level = "";
             this.errors = {};
             this.apiError = null;
         },

@@ -5,9 +5,8 @@
         <router-link to="/" class="nav-brand">
           <i class="bi bi-book text-success fs-1 mx-5"></i>
         </router-link>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-          aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
@@ -34,11 +33,14 @@
         </div>
         <div v-if="isLoggedIn">
           <div class="dropdown">
-            <button class="btn btn-success dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" id="profileDropdown"
+              data-bs-toggle="dropdown">
               <i class="bi bi-person-circle"></i>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><h6 class="dropdown-header">{{ user?.full_name }}</h6></li>
+              <li>
+                <h6 class="dropdown-header">{{ user?.full_name }}</h6>
+              </li>
               <li>
                 <router-link to="/profile" class="dropdown-item">Update Profile</router-link>
               </li>
@@ -76,7 +78,7 @@ export default {
 
 <style scoped>
 .navbar {
-  background-color: rgba(255, 255, 255, 0.2) !important; 
+  background-color: rgba(255, 255, 255, 0.2) !important;
   backdrop-filter: blur(10px);
 }
 
