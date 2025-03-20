@@ -24,6 +24,9 @@ const router = createRouter({
       name: "sundry payment",
       component: () => import("../views/SundryPayment.vue"),
     },
+    { path: '/', redirect: '/allSundry' },
+    { path: '/allSundry', component: () => import('@/views/AllSundry.vue') },
+    { path: '/transcriptApp', component: () => import('@/views/TranscriptApp.vue') },
     {
       path: "/e-bursary",
       name: "e-bursary",

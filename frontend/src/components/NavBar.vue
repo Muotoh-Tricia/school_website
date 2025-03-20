@@ -61,16 +61,21 @@
 <script>
 import { useAuthStore } from '@/stores/authStore'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
     const authStore = useAuthStore()
+    const router = useRouter()
     authStore.checkAuth()
 
     return {
       isLoggedIn: computed(() => authStore.isLoggedIn),
       user: computed(() => authStore.getUser),
-      logout: () => authStore.logout()
+      logout: () => {
+        authStore.logout()
+        router.push('/login')
+      }
     }
   }
 }

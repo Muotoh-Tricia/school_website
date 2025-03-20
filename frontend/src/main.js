@@ -8,6 +8,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 // import { createToast } from 'vue-toastification/dist/vue-toastification'
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+// import { VueSelect } from "vue-select";
+// import "vue-select/dist/vue-select.css";
 
 import App from "./App.vue";
 import router from "./router";
@@ -26,9 +30,10 @@ const options = {
 
 app.use(createPinia());
 app.use(router);
+app.component("v-select", vSelect);
 // app.use(toast)
 app.component("nav-bar", NavBar);
 app.component("footer-component", Footer);
 
-app.mount("#app");
 app.use(Toast, options);
+app.mount("#app");
