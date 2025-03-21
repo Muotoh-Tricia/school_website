@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use App\Models\Department;
 
 class AuthController extends Controller
 {
@@ -28,7 +29,16 @@ class AuthController extends Controller
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8|confirmed',
                 'phone_number' => 'required|string|max:11',
-                'department' => 'required|string',
+                'department' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    function ($attribute, $value, $fail) {
+                        if (!Department::where('name', $value)->exists()) {
+                            $fail('Department not found.');
+                        }
+                    },
+                ],
                 'gender' => 'required|in:male,female,other',
                 'date_of_birth' => 'required|date',
                 'userTypes_id' => 'required|exists:userTypes,id',
