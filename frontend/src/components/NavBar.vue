@@ -17,7 +17,7 @@
             <li class="nav-item">
               <router-link to="/about" class="nav-link">About</router-link>
             </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item">
               <router-link to="/admission status" class="nav-link">Check Admission Status</router-link>
             </li>
             <li class="nav-item">
@@ -28,6 +28,12 @@
             </li>
             <li class="nav-item">
               <router-link to="/e-transcript" class="nav-link">E-Transcript</router-link>
+            </li>
+            <li v-if="user?.userTypes_id === 1" class="nav-item">
+              <router-link to="/viewSubject" class="nav-link">View Subject</router-link>
+            </li>
+            <li v-else-if="user?.userTypes_id === 2" class="nav-item">
+              <router-link to="/createSubject" class="nav-link">Create Subject</router-link>
             </li>
           </ul>
         </div>

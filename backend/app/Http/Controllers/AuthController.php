@@ -20,9 +20,10 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         DB::beginTransaction();
-        
+
         try {
-            $validator = Validator::make($request->all(), [
+            // Create base validation rules
+            $rules = [
                 'full_name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8|confirmed',
@@ -31,8 +32,14 @@ class AuthController extends Controller
                 'gender' => 'required|in:male,female,other',
                 'date_of_birth' => 'required|date',
                 'userTypes_id' => 'required|exists:userTypes,id',
-                'level' => 'required_if:userTypes_id,1|in:100,200,300,400,500,600',
-            ]);
+            ];
+
+            // Add conditional validation for level only if userTypes_id is 1 (student)
+            if ($request->userTypes_id == 1) {
+                $rules['level'] = 'required|in:100,200,300,400,500,600';
+            }
+
+            $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
@@ -57,12 +64,12 @@ class AuthController extends Controller
             if ($request->userTypes_id == 1) {
                 Student::create([
                     'user_id' => $user->id,
-                    'level' => $request->level ?? '100' // Use provided level or default to 100
+                    'level' => $request->level
                 ]);
             } else if ($request->userTypes_id == 2) {
                 Staff::create([
                     'user_id' => $user->id,
-                    'position' => 'New Staff' // Default position for new staff
+                    'position' => 'New Staff'
                 ]);
             }
 
@@ -111,7 +118,7 @@ class AuthController extends Controller
 
             // Retrieve authenticated user with relationships
             $user = User::where('email', $request->email)->first();
-            
+
             // Load the appropriate relationship based on user type
             if ($user->userTypes_id == 1) {
                 $user->load('student');
